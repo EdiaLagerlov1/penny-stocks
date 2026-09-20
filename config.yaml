@@ -1,0 +1,18 @@
+watchlist:
+  - SNDL
+  - CENN
+  - MULN
+
+scan_interval_minutes: 15
+confidence_threshold_buy: 0.75
+confidence_threshold_sell: 0.25
+cooldown_hours: 2
+
+newsapi_key: ${NEWSAPI_KEY}
+
+email:
+  smtp_host: smtp.gmail.com
+  smtp_port: 587
+  sender: ${EMAIL_SENDER}
+  password: ${EMAIL_PASSWORD}
+  recipient: ${EMAIL_RECIPIENT}

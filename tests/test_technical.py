@@ -4,12 +4,28 @@ import pytest
 from technical import analyze_technical
 
 def _make_df(n=60, trend="up"):
-    """Create synthetic OHLCV data."""
+    """Create synthetic OHLCV data with realistic RSI values.
+
+    Uptrend pattern: extended rally then sharp pullback -> RSI < 30 (oversold/bullish).
+    Downtrend pattern: extended decline then sharp bounce -> RSI > 70 (overbought/bearish).
+    These align with the spec's binary RSI thresholds for bullish/bearish classification.
+    """
     dates = pd.date_range("2024-01-01", periods=n, freq="D")
+    close = np.ones(n)
     if trend == "up":
-        close = np.linspace(1.0, 2.0, n)
+        # Extended uptrend followed by a sharp pullback leaves RSI oversold (<30)
+        for i in range(1, n):
+            if i < n - 12:
+                close[i] = close[i - 1] * 1.005   # sustained rally
+            else:
+                close[i] = close[i - 1] * 0.975   # sharp pullback -> oversold
     elif trend == "down":
-        close = np.linspace(2.0, 1.0, n)
+        # Extended downtrend followed by a sharp bounce leaves RSI overbought (>70)
+        for i in range(1, n):
+            if i < n - 12:
+                close[i] = close[i - 1] * 0.995   # sustained decline
+            else:
+                close[i] = close[i - 1] * 1.025   # sharp bounce -> overbought
     else:
         close = np.ones(n) * 1.5
     df = pd.DataFrame({

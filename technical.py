@@ -35,8 +35,13 @@ def analyze_technical(df: pd.DataFrame) -> dict:
     # --- RSI ---
     rsi_series = ta.rsi(close, length=14)
     rsi = float(rsi_series.iloc[-1]) if rsi_series is not None and not rsi_series.empty else 50.0
-    # Normalize RSI to 0–1: high RSI = bullish momentum, low RSI = bearish momentum
-    rsi_score = rsi / 100.0
+    # Spec: RSI < 30 = oversold (bullish), RSI > 70 = overbought (bearish), else neutral
+    if rsi < 30:
+        rsi_score = 1.0   # oversold = bullish
+    elif rsi > 70:
+        rsi_score = 0.0   # overbought = bearish
+    else:
+        rsi_score = 0.5   # neutral
 
     # --- MACD ---
     macd_df = ta.macd(close, fast=12, slow=26, signal=9)

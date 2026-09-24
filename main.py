@@ -2,7 +2,7 @@ import os
 import re
 import logging
 import yaml
-from datetime import datetime
+from datetime import datetime, timezone
 from dotenv import load_dotenv
 from apscheduler.schedulers.blocking import BlockingScheduler
 import pytz
@@ -79,7 +79,7 @@ def scan(config: dict) -> None:
 
             if signal["should_alert"]:
                 send_alert(ticker, price, signal, tech, sent, config)
-                _cooldown_state[ticker] = datetime.utcnow()
+                _cooldown_state[ticker] = datetime.now(timezone.utc)
                 log.info(f"{ticker}: alert sent.")
 
         except Exception as e:

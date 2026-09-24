@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 _TECH_WEIGHT = 0.70
 _SENT_WEIGHT = 0.30
@@ -54,7 +54,7 @@ def combine_signals(
 
     # Cooldown check
     last_alert = cooldown_state.get(ticker)
-    if last_alert and datetime.utcnow() - last_alert < timedelta(hours=cooldown_hours):
+    if last_alert and datetime.now(timezone.utc) - last_alert < timedelta(hours=cooldown_hours):
         return {"action": action, "confidence": confidence, "should_alert": False}
 
     return {"action": action, "confidence": confidence, "should_alert": True}

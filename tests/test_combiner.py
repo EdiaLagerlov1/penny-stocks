@@ -1,5 +1,5 @@
 import pytest
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from combiner import combine_signals
 
 _config = {
@@ -34,14 +34,14 @@ def test_conflicting_directions_suppressed():
 def test_cooldown_suppresses_repeat_alert():
     tech = {"score": 0.85, "direction": "bullish", "details": {}}
     sent = {"score": 0.80, "direction": "bullish", "headline_count": 5}
-    cooldown_state = {"SNDL": datetime.utcnow() - timedelta(minutes=30)}
+    cooldown_state = {"SNDL": datetime.now(timezone.utc) - timedelta(minutes=30)}
     result = combine_signals("SNDL", tech, sent, cooldown_state, _config)
     assert result["should_alert"] is False
 
 def test_cooldown_expired_allows_alert():
     tech = {"score": 0.85, "direction": "bullish", "details": {}}
     sent = {"score": 0.80, "direction": "bullish", "headline_count": 5}
-    cooldown_state = {"SNDL": datetime.utcnow() - timedelta(hours=3)}
+    cooldown_state = {"SNDL": datetime.now(timezone.utc) - timedelta(hours=3)}
     result = combine_signals("SNDL", tech, sent, cooldown_state, _config)
     assert result["should_alert"] is True
 

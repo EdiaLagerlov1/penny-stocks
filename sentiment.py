@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 from newsapi import NewsApiClient
 
@@ -34,7 +34,7 @@ def analyze_sentiment(ticker: str, newsapi_key: str) -> dict:
     neutral = {"score": 0.5, "direction": "neutral", "headline_count": 0}
     try:
         client = NewsApiClient(api_key=newsapi_key)
-        from_dt = (datetime.utcnow() - timedelta(hours=2)).strftime("%Y-%m-%dT%H:%M:%S")
+        from_dt = (datetime.now(timezone.utc) - timedelta(hours=2)).strftime("%Y-%m-%dT%H:%M:%S")
         response = client.get_everything(
             q=ticker,
             from_param=from_dt,

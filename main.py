@@ -2,7 +2,7 @@ import os
 import re
 import logging
 import yaml
-from datetime import datetime, timezone
+from datetime import datetime, time as dt_time, timezone
 from dotenv import load_dotenv
 from apscheduler.schedulers.blocking import BlockingScheduler
 import pytz
@@ -49,9 +49,9 @@ def is_market_open() -> bool:
     now = datetime.now(_ET)
     if now.weekday() >= 5:  # Saturday=5, Sunday=6
         return False
-    open_time = now.replace(hour=_MARKET_OPEN[0], minute=_MARKET_OPEN[1], second=0, microsecond=0)
-    close_time = now.replace(hour=_MARKET_CLOSE[0], minute=_MARKET_CLOSE[1], second=0, microsecond=0)
-    return open_time <= now < close_time
+    market_open = dt_time(_MARKET_OPEN[0], _MARKET_OPEN[1])
+    market_close = dt_time(_MARKET_CLOSE[0], _MARKET_CLOSE[1])
+    return market_open <= now.time() < market_close
 
 
 def scan(config: dict) -> None:
